@@ -1,0 +1,476 @@
+I need you to build a complete, interview-ready **product analytics** project for a **ShareChat Product Analyst Intern** role in India. This must be a **product analytics** project, not a data science project — the emphasis is SQL depth, metric definitions, cohort thinking, and analytical storytelling. **Do not use scikit-learn or build any ML models.** Build it end-to-end following the detailed specifications below.
+
+## Project Overview
+
+**Name:** ShareChat Creator & Content Engagement Analytics
+
+**Business problem:** How do we measure and improve user engagement, retention, and creator ecosystem health on a multi-language short-video platform — and what product levers should the team pull?
+
+Three analytical questions fall out of this:
+1. **User retention & engagement** — who stays, who churns, and why? (DAU/WAU/MAU, D1/D7/D30 retention, session depth)
+2. **Content & creator performance** — which content types, languages, and creator tiers drive the platform?
+3. **Monetization signals** — which user segments show highest ad/commerce intent?
+
+## Core Requirements (from the JD)
+
+The project must demonstrate:
+- Deep SQL on Redshift-style analytical data (all queries written in Redshift-compatible syntax, tested against SQLite)
+- Scripting to fetch/modify data from API endpoints (simulated)
+- Working with large user behavior data (~2M event-level rows)
+- Finding trends and patterns, anomaly detection
+- Data modeling (star schema)
+- Statistics (A/B test significance, confidence intervals, chi-square)
+- Segmentation (RFM-style, creator tiering)
+- Report writing and presenting findings (a proper product memo)
+
+**Explicit non-goals:** No ML models. No sklearn. No predictions. This is product analytics, and scoping it correctly is itself a talking point.
+
+## ShareChat Brand Guidelines
+
+Before styling the dashboard, **do a quick web search for "ShareChat brand colors hex" and "ShareChat logo"** to confirm current brand colors. Use those. As a starting reference:
+- Dominant **orange/red gradient** feel (ShareChat's brand is orange-forward)
+- Typical primary around `#E8322D` / `#FF5722` orange-red family
+- Pair with white and charcoal (`#1A1A1A`) backgrounds
+- Typography: Inter or Poppins — bold, modern, consumer-facing
+- Header styling: punchier and more energetic than a corporate dashboard — this is a consumer social media company
+
+Do not reproduce the actual ShareChat logo. Use a clean text header like "ShareChat | Product Analytics" in brand colors.
+
+## Project Structure
+
+Create exactly this structure:
+
+```
+sharechat-product-analytics/
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── data/
+│   ├── raw/
+│   └── warehouse/
+├── src/
+│   ├── 01_generate_data.py
+│   ├── 02_simulate_api_fetch.py
+│   ├── 03_build_warehouse.py
+│   └── 04_data_quality_checks.py
+├── sql/
+│   ├── 01_engagement_metrics.sql
+│   ├── 02_retention_cohorts.sql
+│   ├── 03_content_performance.sql
+│   ├── 04_creator_analytics.sql
+│   ├── 05_funnel_analysis.sql
+│   ├── 06_ab_test_analysis.sql
+│   ├── 07_monetization_analysis.sql
+│   ├── 08_anomaly_detection.sql
+│   ├── 09_power_users.sql
+│   ├── 10_creator_retention.sql
+│   ├── 11_language_cross_analysis.sql
+│   ├── 12_session_patterns.sql
+│   ├── 13_festival_impact.sql
+│   ├── 14_device_segmentation.sql
+│   ├── 15_cohort_ltv.sql
+│   └── README.md
+├── notebooks/
+│   ├── 01_exploratory_analysis.ipynb
+│   ├── 02_ab_test_deep_dive.ipynb
+│   └── 03_creator_ecosystem.ipynb
+├── dashboard/
+│   └── app.py
+├── reports/
+│   ├── product_memo.md
+│   └── metrics_definitions.md
+└── docs/
+    ├── PROJECT_REPORT.md
+    ├── DATA_DICTIONARY.md
+    ├── SCHEMA_DIAGRAM.md
+    ├── DASHBOARD_GUIDE.md
+    └── INTERVIEW_PREP.md
+```
+
+## Synthetic Dataset Specifications
+
+Use `Faker` + `NumPy` with a fixed random seed (`42`) for reproducibility. Build the data as a **star schema** — this is itself a talking point ("I modeled this the way a real Redshift warehouse would be structured at ShareChat").
+
+**Scale:** 50,000 users, 5,000 creators, 100,000 posts, **~2 million events** over 90 days.
+
+### Dimension: `dim_users` (50,000 rows)
+- `user_id` (e.g., U_0000001)
+- `signup_date` (spread across ~2 years, with more recent users than old)
+- `signup_language` — weighted: Hindi 35%, Telugu 12%, Tamil 10%, Bhojpuri 8%, Marathi 7%, Bengali 7%, Kannada 6%, Malayalam 5%, Gujarati 4%, Punjabi 3%, Odia 2%, Assamese 1%
+- `city_tier` — Tier-1/Tier-2/Tier-3/Tier-4 (roughly 15/25/35/25 split)
+- `age_bucket` — 13-17, 18-24, 25-34, 35-44, 45+ (skewed young)
+- `gender` — M/F/Other
+- `device_type` — Android-Low / Android-Mid / Android-High / iOS (~60/25/10/5 — ShareChat is heavily Android)
+- `acquisition_channel` — Organic/Paid/Referral/Preinstall
+- `experiment_group` — control/variant (50/50 split for the simulated A/B test)
+
+### Dimension: `dim_creators` (5,000 rows)
+- `creator_id` (e.g., C_000001)
+- `creator_signup_date`
+- `primary_language` (same distribution as users)
+- `follower_count` — **power law distributed** (most have <1K, few have millions)
+- `creator_tier` — derived from follower_count: Nano (<1K), Micro (1K-10K), Mid (10K-100K), Macro (100K-1M), Mega (>1M)
+- `content_category` — Comedy/Devotional/News/Music/Dance/Education/Lifestyle/Gaming/Regional-Drama
+- `is_verified` — boolean (only ~3%)
+
+### Dimension: `dim_content` (100,000 rows)
+- `post_id`
+- `creator_id` (foreign key — skewed so Mega creators post more)
+- `post_date` (last 90 days)
+- `content_type` — ShortVideo/Image/Text/LiveStream (weighted heavily ShortVideo)
+- `language`
+- `duration_seconds` (for videos; 15-90 sec typical)
+- `has_music` — boolean
+- `hashtag_count` — 0-15
+
+### Dimension: `dim_date` (generate for 2 years)
+- `date`, `day_of_week`, `week_num`, `month`, `is_weekend`
+- `is_festival` — boolean, with `festival_name` — tag real Indian festival dates: Diwali, Holi, Eid-ul-Fitr, Eid-ul-Adha, Dussehra, Raksha Bandhan, Ganesh Chaturthi, Onam, Pongal, Navratri, Christmas, New Year
+
+### Fact: `fact_sessions` (~500K rows, last 90 days)
+- `session_id`
+- `user_id`
+- `session_start`, `session_end`
+- `session_duration_sec`
+- `posts_viewed`, `posts_liked`, `posts_shared`, `posts_commented`
+- `device_type`
+- `app_version` (e.g., 14.5.0)
+
+### Fact: `fact_engagement_events` (~2M rows)
+- `event_id`
+- `user_id`
+- `post_id`
+- `creator_id` (denormalized for query performance — mention this in the schema doc as a real warehousing pattern)
+- `event_type` — view/like/share/comment/follow/skip/report (views dominant)
+- `event_timestamp`
+- `watch_duration_sec` (only meaningful for video views)
+- `scroll_velocity` — numeric, proxy for engagement quality
+
+### Fact: `fact_ad_impressions` (~300K rows)
+- `impression_id`
+- `user_id`
+- `ad_id` (synthetic)
+- `impression_timestamp`
+- `ad_category` (Ecommerce/Gaming/Fintech/FMCG/Travel/Education)
+- `was_clicked` (boolean, realistic ~3% CTR)
+- `was_converted` (boolean, ~10% of clicks)
+- `revenue_inr` (only when clicked/converted)
+
+### Realistic Behavioral Signals (must be present, these power the insights)
+- **Retention curve** — classic social app shape: ~40% D1, ~20% D7, ~8% D30 retention
+- **Language effects** — Hindi/Bhojpuri highest volume; Marathi/Bengali higher engagement depth (more likes/shares per view)
+- **City tier pattern** — Tier-3/4 users have longer sessions, Tier-1 users convert better on ads
+- **Festival spikes** — DAU 2-3x normal on major festival days; engagement also spikes
+- **Weekend effect** — ~30% longer sessions on Sat/Sun
+- **Creator power law** — top 1% of creators generate ~40% of engagement (Pareto)
+- **Device effect** — low-end Android has higher crash/skip rates
+- **A/B test lift** — variant group should have ~5-8% higher session duration and ~3-5% higher D7 retention than control, statistically detectable with proper testing
+
+### Intentional Data Quality Issues (lighter than Citi project — for this role, it's about noticing them, not cleaning them)
+- ~0.5% duplicate event rows
+- A few sessions with `session_end < session_start` (flag in data_quality_checks)
+- ~1% of events with null `watch_duration_sec` where event_type='view' (realistic — instrumentation gaps)
+- Handful of test/internal user_ids (e.g., containing "TEST_") to be filtered
+
+Save all tables as CSVs in `data/raw/`.
+
+## Script-by-Script Specifications
+
+### `src/01_generate_data.py`
+Generates all dimension and fact tables with the dependencies and behavioral signals described. Heavily commented — each signal should have a comment explaining what real-world pattern it simulates. Output CSVs to `data/raw/`.
+
+### `src/02_simulate_api_fetch.py`
+Simulates fetching engagement events from an "internal API endpoint." Build this to **actually look like real API-fetching code**: uses `requests` style patterns (even if it's just reading a local CSV), handles pagination in a loop, retries on simulated failures, rate-limits, logs progress. This demonstrates the "scripting to fetch from API endpoints" skill in the JD. Output is a refreshed version of `fact_engagement_events.csv`. Include a docstring explaining the pattern would extend to real API endpoints with auth headers, etc.
+
+### `src/03_build_warehouse.py`
+Loads all CSVs into SQLite at `data/warehouse/sharechat_warehouse.db`. Creates the star schema properly with primary keys, foreign keys, and indexes on join columns (`user_id`, `creator_id`, `post_id`, `date`). Include a section at the top of the script as a comment explaining how this would differ on real Redshift (DISTKEY, SORTKEY choices).
+
+### `src/04_data_quality_checks.py`
+Runs sanity checks and prints a report:
+- Row counts per table (sanity check they match expected scale)
+- Null rate per column
+- Referential integrity (every `user_id` in facts exists in `dim_users`)
+- Date range validity (no future dates, no sessions with negative duration)
+- Duplicate detection
+- Flags the intentional quality issues for the analyst to notice
+
+Output to console and also save as `data/warehouse/data_quality_report.txt`.
+
+## 15 Advanced SQL Queries
+
+Every query file must start with a comment block:
+```sql
+-- ============================================================
+-- Query: [name]
+-- Business Question: [what this answers]
+-- SQL Techniques: [window functions, CTEs, etc.]
+-- Redshift Notes: [anything that would differ from real Redshift]
+-- Expected Output: [rows × cols shape]
+-- Product Decision This Informs: [what a PM would do with it]
+-- ============================================================
+```
+
+All queries must be **Redshift-compatible syntax where possible** and **actually run against the SQLite DB**. For functions that differ (e.g., `DATEDIFF` in Redshift vs SQLite's `julianday()`), include both versions commented out.
+
+### `sql/01_engagement_metrics.sql`
+- **Query 1:** DAU / WAU / MAU with 7-day rolling averages, stickiness ratio (DAU/MAU), day-over-day change using `LAG()`
+
+### `sql/02_retention_cohorts.sql`
+- **Query 2:** D1/D7/D14/D30 retention cohort matrix — users grouped by signup week, retention rate tracked across weeks. Self-join on user activity.
+
+### `sql/03_content_performance.sql`
+- **Query 3:** Engagement rate (likes+shares+comments / views) by language × content_category, with `PERCENT_RANK()` to rank categories within each language
+
+### `sql/04_creator_analytics.sql`
+- **Query 4:** Creator power-law analysis — cumulative share of engagement captured by top X% of creators using `NTILE(100)` and cumulative sums. Should show something like "top 1% of creators drive 40% of engagement."
+
+### `sql/05_funnel_analysis.sql`
+- **Query 5:** View → Like → Share → Follow funnel, overall and broken down by city tier. Drop-off rates at each stage using conditional aggregation.
+
+### `sql/06_ab_test_analysis.sql`
+- **Query 6:** A/B test readout computed entirely in SQL: per-group sample size, mean session duration, variance, standard error, z-statistic, approximate p-value. Include comment block explaining the statistical logic.
+
+### `sql/07_monetization_analysis.sql`
+- **Query 7:** Revenue per user, CTR, conversion rate — pivoted by city_tier × acquisition_channel using `SUM(CASE WHEN ...)`
+
+### `sql/08_anomaly_detection.sql`
+- **Query 8:** Anomaly detection on DAU — flag days where DAU deviates more than 2 standard deviations from the trailing 14-day mean, using window functions `AVG() OVER` and `STDDEV() OVER`. Cross-reference with festival flag to separate real anomalies from expected spikes.
+
+### `sql/09_power_users.sql`
+- **Query 9:** RFM-style user segmentation — Recency (days since last session), Frequency (sessions in last 30 days), Monetary (total watch time), each bucketed with `NTILE(5)`, combined into named segments (Champions / Loyal / At Risk / Hibernating / Lost)
+
+### `sql/10_creator_retention.sql`
+- **Query 10:** **Recursive CTE** identifying creators with consecutive-weekly-posting streaks. Show distribution of streak lengths.
+
+### `sql/11_language_cross_analysis.sql`
+- **Query 11:** Cross-language content consumption — do Hindi users watch Bhojpuri content? Build a language × language matrix of user-language vs. content-language consumption. Uses self-join and pivot.
+
+### `sql/12_session_patterns.sql`
+- **Query 12:** Session depth distribution — histogram buckets (0-1 min, 1-5 min, 5-15 min, 15-30 min, 30+ min), segmented by device_type. Uses `CASE WHEN` bucketing.
+
+### `sql/13_festival_impact.sql`
+- **Query 13:** Festival impact analysis — compare DAU, session duration, and engagement rate on festival days vs. non-festival days, with percentage lift and statistical significance check (basic t-test logic in SQL).
+
+### `sql/14_device_segmentation.sql`
+- **Query 14:** Device-tier behavior comparison — crash proxy (very short sessions <10 sec), app version distribution, engagement rate per device tier. Uses conditional aggregation and window functions.
+
+### `sql/15_cohort_ltv.sql`
+- **Query 15:** Cohort-based LTV proxy — for each signup-month cohort, compute cumulative watch time and ad revenue per user over 30/60/90 day windows. Chain of 3+ CTEs.
+
+### `sql/README.md`
+For each of the 15 queries:
+- Business question answered
+- SQL techniques demonstrated
+- 2-line plain-English interpretation
+- What product decision it informs
+- Any Redshift-vs-SQLite differences
+
+## Jupyter Notebooks
+
+### `notebooks/01_exploratory_analysis.ipynb`
+Markdown-heavy narrative. Data loading → shape → distributions → language breakdown → city tier behavior → festival effects → key insights box at the end. Use matplotlib + seaborn with ShareChat orange palette.
+
+### `notebooks/02_ab_test_deep_dive.ipynb`
+Proper A/B test writeup:
+- Hypothesis statement
+- Sample size check (is it powered?)
+- Primary metric (session duration) with confidence intervals
+- Secondary metrics (D7 retention, engagement rate)
+- Segment cuts — does the lift hold across languages, tiers, device types? (Simpson's paradox check)
+- Statistical significance (scipy.stats.ttest_ind, chi-square for proportions)
+- **Recommendation** at the end: ship / don't ship / iterate, with reasoning
+
+### `notebooks/03_creator_ecosystem.ipynb`
+- Creator tier distribution
+- Power-law visualization (log-log plot)
+- Top creators by language/category
+- Creator retention — how many creators are still posting after N weeks?
+- Which content categories have the healthiest creator ecosystems?
+
+## Streamlit Dashboard (`dashboard/app.py`)
+
+### Branding
+Apply ShareChat-inspired CSS (confirm colors via web search first). Orange-forward, bold, consumer-feel. Header: "ShareChat | Product Analytics" with subtitle "Product Analyst Intern Portfolio Project". Sidebar navigation.
+
+### Page 1: Product Health Overview
+- Four KPI tiles: DAU, MAU, Stickiness (DAU/MAU), Avg Session Duration
+- DAU trend chart (Plotly) with 7-day rolling average overlay
+- Retention curve (D1, D7, D14, D30)
+- "Top 3 insights right now" callout boxes
+- Written for an executive audience
+
+### Page 2: User Behavior & Retention
+- Interactive filters (language, city tier, device type, age bucket) in sidebar
+- Cohort retention matrix heatmap (signup week × weeks since signup)
+- Session depth distribution histogram
+- Engagement funnel (View → Like → Share → Follow) with drop-off annotations
+- "Top performing segments" callout
+
+### Page 3: Content & Creator Analytics
+- Language leaderboard (by engagement rate, not just volume)
+- Content category performance matrix
+- Creator power-law chart (Pareto / Lorenz curve)
+- Top creators table (filterable by tier and category)
+- Creator tier distribution pie
+
+### Page 4: A/B Test Results
+- Structured like a real PM readout
+- Experiment summary card (control vs. variant sample sizes)
+- Primary metric comparison with confidence interval bars
+- Secondary metrics table
+- Segment cuts to check for Simpson's paradox
+- **Recommendation box** at the bottom: "Ship / Don't Ship / Iterate" with reasoning
+- Written so a non-technical PM could read it
+
+### Page 5: Monetization Lens
+- Ad CTR by city tier (bar chart)
+- Revenue per user heatmap: language × city tier
+- Conversion funnel: Impression → Click → Conversion
+- Ad category performance table
+- Key finding callout about monetization opportunities
+
+### Page 6: SQL Workbench
+- Dropdown to pick any of the 15 queries
+- Display the SQL in a syntax-highlighted code block
+- Execute it live against the SQLite warehouse
+- Show result in `st.dataframe`
+- Below each result: "What this tells us" interpretation + "What a PM would do with it"
+
+### General dashboard rules
+- Cache DB connection with `@st.cache_resource`, data with `@st.cache_data`
+- Graceful error messages if files missing
+- All charts Plotly, labeled with titles/axes/units
+- Keep the aesthetic bold and energetic (this is a consumer social company, not a bank)
+
+## Product Memo — `reports/product_memo.md`
+
+This is the **keystone deliverable**. Write it in actual PM-doc style:
+
+- **TL;DR** — 3 bullets, 1 sentence each
+- **Context** — what question we're answering, why now
+- **Approach** — data sources, methodology (brief)
+- **Key Findings** — 4-5 findings, each:
+  - Bold headline claim
+  - 2-3 sentences of evidence with specific numbers
+  - Reference to the query/chart that backs it
+- **Recommendation** — specific product action with owner and rough effort
+- **Risks & Assumptions**
+- **Appendix** — queries used, data caveats, open questions
+
+Pick a **specific, concrete narrative** — something like: *"Tier-3/4 users over-index on session time but under-index on ad conversion by 40% — we're leaving ₹X in revenue on the table, and here are three things to try."* Make the numbers come from the actual synthetic data — don't invent numbers that aren't in the dataset.
+
+## Metrics Definitions — `reports/metrics_definitions.md`
+
+Single source of truth. For every metric in the project:
+- Name
+- Precise definition (the math)
+- SQL snippet showing how it's computed
+- Common pitfalls / what it doesn't measure
+- Related metrics
+
+Cover at minimum: DAU, WAU, MAU, Stickiness, D1/D7/D30 Retention, Session Duration, Session Depth, Engagement Rate, CTR, Conversion Rate, ARPU, Creator Retention, Power User. **Getting these definitions crisp is exactly what a product analyst does** — it's a major interview signal.
+
+## Documentation
+
+### `README.md`
+GitHub-style: project summary, the specific non-ML product-analytics scoping note (call this out — it's a strength), tech stack, setup instructions, screenshots placeholder, repo structure, author note.
+
+### `docs/PROJECT_REPORT.md`
+~2,500 word technical writeup:
+1. Executive Summary
+2. Business Context (ShareChat's product landscape, regional language dynamics)
+3. Data Model (star schema explanation, why these tables)
+4. Methodology
+5. Key Findings (3 big ones, with specific numbers from the data)
+6. Product Recommendations
+7. Limitations & Assumptions
+8. Future Work
+
+### `docs/DATA_DICTIONARY.md`
+Every field in every table: name, type, description, valid values, source (raw/derived), real-world interpretation.
+
+### `docs/SCHEMA_DIAGRAM.md`
+**Mermaid diagram** of the star schema showing fact tables in the center, dimensions around them, foreign key relationships. Also an ASCII fallback.
+
+### `docs/DASHBOARD_GUIDE.md`
+5-minute interview demo script — page by page, what to click, what to say. Include a "depth-vs-breadth" decision: if they ask technical depth, spend 4 minutes on SQL Workbench + A/B Test; if they ask product sense, spend 4 minutes on Overview + Monetization.
+
+### `docs/INTERVIEW_PREP.md`
+Must include:
+
+**Project narrative** — one paragraph you can recite.
+
+**STAR answers** to:
+- "Walk me through this project"
+- "Why did you scope it this way (no ML)?"
+- "Hardest part?"
+- "How would you scale this to real ShareChat volume?"
+
+**Product analytics technical prep:**
+- Metric definitions (quiz yourself on each from metrics_definitions.md)
+- How would you measure success of [feature]? (frame: North Star + guardrails + counters)
+- How do you define a power user?
+- How would you debug a DAU drop? (seasonality vs. bug vs. release vs. upstream — structured diagnostic tree)
+- Walk me through how you'd A/B test X
+- Funnel thinking — identifying bottlenecks
+- Cohort vs. snapshot analysis — when to use each
+- Simpson's paradox example
+- Statistical significance basics (p-values, confidence intervals, power)
+
+**SQL prep:**
+- Window functions vs aggregates
+- `ROW_NUMBER` vs `RANK` vs `DENSE_RANK`
+- When to use CTEs vs subqueries
+- Redshift-specific: DISTKEY, SORTKEY, VACUUM, ANALYZE
+- Common performance pitfalls
+
+**ShareChat-specific context:**
+- The 15 regional languages and rough relative sizes
+- City tier dynamics in Indian consumer internet
+- Creator economy basics (power law, follower tiers, monetization)
+- Festival-driven usage patterns
+- Why Android-heavy user base affects product decisions
+- ShareChat vs. Moj vs. QuickTV (from the JD)
+
+**Behavioral prep:**
+- "Tell me about a time you found an insight others missed"
+- "How do you prioritize when you have multiple asks?"
+- "Tell me about a time you were wrong"
+
+## Execution Order
+
+1. Folder structure, `requirements.txt`, `.gitignore`
+2. **Web search** for ShareChat brand colors — lock in the palette
+3. Build and run `01_generate_data.py` — verify realistic distributions via quick pandas checks
+4. Build `02_simulate_api_fetch.py` — make it look like real API code
+5. Build and run `03_build_warehouse.py` — verify DB loads with proper indexes
+6. Build and run `04_data_quality_checks.py` — verify intentional issues are detected
+7. Write all 15 SQL queries and **actually test each one** against the DB — every query must execute and return sensible results. This is the most important step for this role — do not skip testing.
+8. Build the three notebooks, run end-to-end
+9. Build the Streamlit dashboard — briefly launch to verify each page renders
+10. **Write the product memo** using real numbers from your data
+11. Write `metrics_definitions.md`
+12. Write all remaining documentation
+13. Final cleanup: docstrings on all functions, PEP 8, no TODOs, no broken paths
+14. Summary output with exact commands to launch the dashboard
+
+## Quality Bar
+
+This is portfolio work going in front of a ShareChat hiring manager. That means:
+- Clean, commented code with docstrings
+- PEP 8, type hints where they help
+- `pathlib` relative paths — no hardcoded absolute paths
+- Every chart has title, axis labels, units
+- No placeholders, no TODOs, no Lorem Ipsum
+- Every SQL query must actually execute without errors
+- The dashboard must launch and every page must render
+- The product memo must use real numbers from the generated data, not invented ones
+- Metrics definitions must be mathematically precise
+
+**Role-fit check — keep these in mind throughout:**
+- This is a **Product Analyst Intern** role, not a Data Scientist role — write, phrase, and structure everything accordingly
+- SQL is the hero skill — the 15 queries should be the strongest asset in the repo
+- The product memo is the keystone interview artifact — spend the most writing care there
+- No ML. If you're tempted to add a model, resist — explain in the project narrative that scoping this as pure product analytics is deliberate
+
+Please build the entire project now, file by file, testing as you go. When finished, give me a short summary of what was built and the exact commands to launch the dashboard.

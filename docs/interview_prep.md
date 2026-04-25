@@ -1,224 +1,203 @@
-# ShareChat Product Analyst Internship — Interview Preparation Guide
+# Interview Preparation Guide — ShareChat Product Analyst Intern
 
 ---
 
-## 1. About the Company (Know This Cold)
+## 1. About ShareChat (Know This Cold)
 
 | Fact | Detail |
-|---|---|
-| Founded | 2015 |
+|------|--------|
 | Full name | Mohalla Tech Pvt Ltd |
+| Founded | 2015 (Varanasi, IIT Kanpur alumni team) |
 | Platforms | ShareChat (social), Moj (short video), QuickTV (micro drama) |
-| Languages | 15 regional languages |
-| ARR | ₹1,000 Crore (~$120M USD) |
+| Languages | 15 regional languages — only major platform doing this at scale |
 | MMU | 200M+ Monthly Monetizable Users |
-| Revenue Growth | 28% YoY (July–Sept quarter); 60%+ QoQ (Oct–Dec quarter) |
-| QuickTV | 10M downloads in 3 months of launch; 60M MAU across the network |
+| Revenue | ₹1,000 Crore+ ARR, 28% YoY growth (Q2 FY26) |
 | Profitability | Only Indian social media company to achieve profitability |
-| Differentiation | Only major social platform serving non-English Indian users at scale |
+| QuickTV | 10M downloads in 3 months of launch |
+| Key thesis | India has ~600M internet users; only ~150M comfortable with English — ShareChat owns the other 450M ("Bharat" internet) |
 
-**Why ShareChat matters:** India has ~600M internet users; only ~150M are comfortable consuming English content. ShareChat owns the other 450M — the "Bharat" internet user.
-
----
-
-## 2. This Project — What to Say to the Hiring Manager
-
-> "I built a full-stack analytics platform simulating how a Product Analyst at ShareChat might approach daily work. It pulls together user behaviour, content performance, monetisation, and retention into one interactive dashboard — the kind of view I'd want before every weekly product review meeting."
-
-### What the project demonstrates
-1. **SQL fluency** — 11 queries covering retention cohorts, RFM segmentation, funnel analysis, revenue attribution, and feed quality scoring, all written for Redshift.
-2. **Metric design** — Every KPI card has a label, value, delta, and context note. You understand the *why* behind each number (e.g., DAU/MAU as a stickiness proxy, eCPM as pricing health).
-3. **Product thinking** — The Insight boxes on each page aren't just summaries; they connect data points to business decisions.
-4. **Technical execution** — Python, Streamlit, Plotly, NumPy/Pandas, and enough synthetic data modelling to make all charts realistic and internally consistent.
-5. **Brand awareness** — ShareChat orange, dark-navy sidebar, Inter typeface, and Indian-market framing (₹ throughout, 15 regional languages, Indian regions).
+**Why ShareChat matters to a product analyst:**
+The 15-language strategy means no single feature decision is platform-universal. Every A/B test, every funnel analysis, every retention cohort needs to be cut by language. This is what makes the PM job harder and more interesting than a single-language app.
 
 ---
 
-## 3. Key Metrics You Must Know
+## 2. Project Narrative (Memorise This Paragraph)
 
-### User Metrics
-| Metric | Formula | ShareChat Target |
-|---|---|---|
-| MAU | Unique users active in a 30-day window | 200M MMU |
-| DAU | Unique users active in a single day | ~90–100M |
-| DAU/MAU (Stickiness) | DAU ÷ MAU | >45% (excellent) |
-| Session Duration | Average minutes per session per user | 18–22 min |
-| Sessions per User | Monthly sessions ÷ active users | 40–60 |
-
-### Content Metrics
-| Metric | Formula | Why It Matters |
-|---|---|---|
-| Engagement Rate | (Likes+Shares+Comments) ÷ Views | Measures content resonance |
-| Watch-Through Rate | Avg watch time ÷ content duration | Feed quality signal |
-| Virality Score | Share velocity in first 6h | Predicts organic reach |
-| Content per User | Posts consumed per session | Habit depth indicator |
-
-### Monetisation Metrics
-| Metric | Formula | Typical India Range |
-|---|---|---|
-| eCPM | Revenue ÷ Impressions × 1000 | ₹60–₹120 |
-| ARPU | Monthly Revenue ÷ MAU | ₹4–₹8 for social apps |
-| Fill Rate | Filled ad requests ÷ Total ad requests | >80% is good |
-| CTR | Clicks ÷ Impressions | 0.3–1.2% for social |
-
-### Retention Metrics
-| Metric | Definition | Industry Benchmark |
-|---|---|---|
-| D1 Retention | % of users returning on Day 1 | 25–40% |
-| D7 Retention | % of users returning on Day 7 | 15–25% |
-| D30 Retention | % of users returning on Day 30 | 10–20% |
-| M1 Retention | % of cohort active in Month 1 | 30–50% |
+> "I built a full-stack product analytics project to demonstrate the kind of work a Product Analyst does at ShareChat day-to-day. The project generates a realistic synthetic dataset — 50,000 users, 5,000 creators, 2 million engagement events — models it as a Redshift-style star schema, and builds 15 SQL queries covering retention cohorts, funnel analysis, creator power-law, A/B testing, anomaly detection, and cohort LTV. I deliberately scoped this as product analytics without ML — because the questions a PM needs answered (who's churning, where's the funnel drop-off, does this feature work) are better answered by well-written SQL and clear metric definitions than by a black-box model. The keystone deliverable is a product memo that uses real numbers from the data to make three specific product recommendations: ship the feed redesign variant, prioritise Tier-3/4 monetisation, and fix Android-Low crash rates."
 
 ---
 
-## 4. Common Interview Questions & Model Answers
+## 3. STAR Answers
 
-### Analytical / SQL
+### "Walk me through this project."
+**Situation:** Wanted to build a portfolio piece that demonstrates product analytics skills for a ShareChat-style role.
+**Task:** Build an end-to-end product analytics system — data pipeline, warehouse, SQL analysis, A/B testing, dashboard.
+**Action:** Generated 2M events in a star schema. Wrote 15 SQL queries in Redshift-compatible syntax. Built a Streamlit dashboard with 8 pages including a live SQL workbench. Wrote a product memo with specific recommendations grounded in real numbers.
+**Result:** A complete, interview-ready project that demonstrates SQL depth, product thinking, and statistical rigour — without any ML.
 
-**Q: How would you measure if a new content recommendation algorithm is performing better?**
+### "Why did you scope it without ML?"
+Product analysts answer product questions, not research questions. The questions in this project — "who is churning?", "does this feature work?", "which creators are at risk?" — have precise answers in SQL and statistics. An RFM segmentation in SQL runs in seconds, produces interpretable segments, and can be explained to a non-technical PM in one sentence. A gradient boosted classifier for the same problem takes a week to build, requires feature engineering, and produces segments nobody can act on. The right tool for the right question.
 
-> A: I'd run an A/B test and track: (1) Watch-Through Rate — are users watching more of each video? (2) DAU/MAU ratio — is daily engagement improving? (3) D7/D30 retention — are new users sticking around longer? (4) Skip rate — how often users scroll past recommended content. I'd also check eCPM since better-targeted content should attract higher-value ads. In Redshift, I'd use a CTE to split control and treatment users, compute these metrics per group per day, and test significance with a two-proportion z-test after the experiment reaches 80% power.
+### "Hardest part?"
+The trickiest piece was ensuring the synthetic data's behavioral signals are detectable by the SQL queries. The A/B test signal (+6.2% session lift) needs to be statistically significant at n=25K per group. The festival impact needs to clear a 2-sigma threshold. Getting all of these to work together while maintaining realistic distributions required careful parameterisation of the data generator.
+
+### "How would you scale this to real ShareChat volume?"
+Three changes: (1) Point `02_simulate_api_fetch.py` at the real internal API — the pagination/retry/dedup logic is production-ready. (2) Swap SQLite for Redshift — the SQL is already Redshift-compatible; add DISTKEY on user_id for fact tables and DISTSTYLE ALL for dimension tables. (3) Wrap the four src/ scripts in an Airflow DAG for daily incremental loads.
 
 ---
 
-**Q: Write a SQL query to find users who were active last month but not this month.**
+## 4. Product Analytics Technical Prep
 
-```sql
-SELECT DISTINCT last_month.user_id
-FROM (
-    SELECT DISTINCT user_id
-    FROM user_sessions
-    WHERE session_start_ts >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
-      AND session_start_ts <  DATE_TRUNC('month', CURRENT_DATE)
-) AS last_month
-LEFT JOIN (
-    SELECT DISTINCT user_id
-    FROM user_sessions
-    WHERE session_start_ts >= DATE_TRUNC('month', CURRENT_DATE)
-      AND session_start_ts <  CURRENT_DATE
-) AS this_month
-  ON last_month.user_id = this_month.user_id
-WHERE this_month.user_id IS NULL;
+### Metric Definitions (from reports/metrics_definitions.md)
+
+| Metric | Formula | Key Pitfall |
+|--------|---------|-------------|
+| DAU | COUNT(DISTINCT user_id) in a day | 1-second sessions count — presence metric, not engagement |
+| WAU | DISTINCT users in rolling 7 days | Partial week at data start understates WAU |
+| MAU | DISTINCT users in rolling 28 days | Specify 28-day rolling vs. calendar-month |
+| Stickiness | DAU / MAU | Can't exceed 1.0; healthy social apps: 40-50% |
+| D7 Retention | Users active day 6-8 / cohort size | Recent cohorts are truncated — check data freshness |
+| Session Duration | session_end - session_start | Filter session_end < session_start (DQ issue) |
+| Engagement Rate | (likes+shares+comments) / views | Varies by content type — normalise before comparing |
+| CTR | clicks / impressions | Measures intent, not purchase intent |
+| ARPU | Revenue / active users | Always specify denominator |
+
+### How do you measure success of a new feature?
+Framework: **North Star + Guardrails + Counters**
+1. **North Star:** What single metric proves the feature is working?
+2. **Guardrails:** What metrics must NOT deteriorate? (D7 retention, CTR, ad revenue)
+3. **Counters:** Supporting metrics that explain the North Star movement
+
+### How do you define a power user?
+ShareChat working definition (from `sql/09_power_users.sql`): User meeting ALL three in 30 days:
+- **Recency:** Active in last 7 days (R-score ≥ 4)
+- **Frequency:** Active on ≥ 15 days out of 30 (F-score ≥ 4)
+- **Monetary:** ≥ 500 minutes total watch time (M-score ≥ 4)
+
+### DAU Drop Diagnostic Tree
+```
+DAU drops unexpectedly
+├── All languages or one? → One = regional issue (carrier, OEM-specific crash)
+├── All devices or one?   → Android-Low only = new release broke low-end
+├── All channels or one?  → Paid only = acquisition campaign paused
+├── Festival effect?      → Check dim_date.is_festival
+├── Recent release?       → Check app_version distribution in fact_sessions
+└── Sessions stable but DAU fell? → Fewer notifications reaching users
 ```
 
-> These are your "at-risk" users. I'd then segment them by language, platform, and last content type to design a re-engagement campaign.
+### A/B Test Setup
+1. State causal hypothesis
+2. Choose primary metric + guardrails
+3. Power analysis (n = 2*(z_α + z_β)² * σ² / δ²)
+4. Randomise at user level (not session level) for stable treatment
+5. Run ≥ 2 weeks to capture weekly seasonality
+6. Welch's t-test for continuous; chi-square for proportions
+7. Segment cuts to check Simpson's paradox
+8. Pre-commit to decision criteria before running
+
+### Cohort vs. Snapshot
+- **Snapshot:** "How many users are in each RFM segment today?" — current-state reporting
+- **Cohort:** "Of Jan signups, what % are active in April?" — causal analysis, retention curves
+
+**Simpson's Paradox:** Overall engagement rate falls, but within each language it rises. Composition shifted toward lower-engagement languages — aggregate is misleading.
 
 ---
 
-**Q: How would you find the top-performing language market for ShareChat?**
+## 5. SQL Deep Dive
 
-> I'd define "top-performing" along three dimensions: (1) Revenue per user (ARPU), (2) Engagement rate, and (3) Retention. A language with high engagement but low revenue is an untapped monetisation opportunity. A language with high revenue but low retention is at risk. I'd build a 2×2 matrix — Revenue vs Retention — and flag each language as: Invest, Monetise, Protect, or Harvest. See Query #9 in the SQL file for the full implementation.
+### Window Functions vs. Aggregates
+```sql
+-- Aggregate: collapses to one row per group
+SELECT city_tier, AVG(session_duration_sec) FROM fact_sessions GROUP BY 1;
 
----
+-- Window: adds aggregate alongside each original row
+SELECT session_id, city_tier, session_duration_sec,
+       AVG(session_duration_sec) OVER (PARTITION BY city_tier) AS tier_avg
+FROM fact_sessions;
+```
 
-**Q: QuickTV grew 60% QoQ in one quarter. How would you validate whether that growth is real?**
+### ROW_NUMBER vs. RANK vs. DENSE_RANK
+Values: 100, 90, 90, 80
+- `ROW_NUMBER`:  1, 2, 3, 4 — unique, arbitrary tie-breaking
+- `RANK`:        1, 2, 2, 4 — ties get same rank, gap after
+- `DENSE_RANK`:  1, 2, 2, 3 — ties get same rank, no gap
 
-> I'd check for: (1) Bot/fraud activity — sudden spikes in low-tenure accounts with no engagement, (2) Acquisition channel mix — heavy paid-UA can inflate MAU cheaply, (3) Retention quality — if D7 retention dropped while MAU spiked, the new users aren't sticky, (4) Engagement depth — are these users actually watching drama episodes, or just opening the app once? Real growth shows up in all four; inflated growth usually fails 2-3 of these checks.
+Use `ROW_NUMBER` for deduplication. Use `DENSE_RANK` for "top N" without gaps.
 
----
+### CTEs vs. Subqueries
+- **CTE:** Readable, reusable, self-documenting. Use for complex/reused logic.
+- **Subquery:** Inline, one-off. Use for simple filter in WHERE/FROM.
+- **Redshift note:** CTEs may be materialised — for very large CTEs, use explicit `CREATE TEMP TABLE`.
 
-### Product Thinking
-
-**Q: ShareChat's DAU/MAU drops for one week. Walk me through your investigation.**
-
-> **Step 1 — Isolate**: Is it all platforms or one? All regions or one geography? All age groups or a cohort? Drill down systematically to find the smallest affected segment.
-> **Step 2 — Timing**: Did it correlate with a release, a content moderation policy change, a server incident, or an external event (exam season, festival)?
-> **Step 3 — Leading indicators**: Check notification CTR (if users aren't opening notifications, something changed in content relevance), session starts vs. session length (are users opening the app but leaving faster?).
-> **Step 4 — Resolution**: If it's product-driven, revert or patch. If it's seasonal (e.g., exam season in North India every March-April), model for it and plan content campaigns to offset.
-
----
-
-**Q: How would you improve user retention for a regional language market like Bhojpuri?**
-
-> Bhojpuri users are often first-time smartphone internet users. Retention levers specific to this segment: (1) **Onboarding** — voice-guided onboarding in Bhojpuri (low literacy), (2) **Content seeding** — curate a 10-video playlist on signup based on declared interests, (3) **Creator growth** — even 50 high-quality Bhojpuri creators dramatically expands content supply, (4) **Notification personalisation** — send notifications at times correlated with historical session starts for this segment. I'd measure each lever's impact on D7 and D30 retention using holdout groups.
-
----
-
-**Q: How would you prioritise which of ShareChat's 15 languages to invest in next?**
-
-> I'd use a prioritisation framework with four factors:
-> 1. **Market Size**: Total speakers in India who are smartphone internet users
-> 2. **Current Penetration**: ShareChat MAU ÷ addressable market
-> 3. **Monetisation Potential**: eCPM × expected MAU (revenue ceiling)
-> 4. **Content Supply**: Existing creator count (limits growth without investment)
->
-> Score each language 1–5 on these four axes. Languages with high market size, low penetration, and decent monetisation are the best investment (e.g., Odia or Assamese). Use the market map chart in the dashboard to visualise this.
+### Redshift-Specific
+- **DISTKEY:** Distributes rows across nodes on the chosen column — use highest-cardinality JOIN column (`user_id`)
+- **SORTKEY:** Physically sorts data for range-scan optimisation — use most-filtered column (`event_timestamp`)
+- **DISTSTYLE ALL:** Replicates entire table to every node — use for small dimensions (< 100K rows)
+- **VACUUM:** Reclaims space, re-sorts after bulk deletes
+- **ANALYZE:** Updates query planner statistics — run after VACUUM
 
 ---
 
-### Behavioural
+## 6. ShareChat Context
 
-**Q: Tell me about a time you found an unexpected insight in data.**
+### 15 Regional Languages (Approximate Shares)
+Hindi 35% · Telugu 12% · Tamil 10% · Bhojpuri 8% · Marathi 7% · Bengali 7% · Kannada 6% · Malayalam 5% · Gujarati 4% · Punjabi 3% · Odia 2% · Assamese 1%
 
-> *(Tailor to your experience, but structure it as):* "I noticed [anomaly]. My initial hypothesis was [X], but when I sliced the data by [dimension], I found [unexpected pattern]. This turned out to be caused by [root cause], which led to [business action]. The outcome was [measurable result]."
+**Dynamics:** Bhojpuri and Hindi cross-consume heavily. South Indian languages (TN/AP/KA/KL) skew higher-income → better monetisation. Small languages have passionate but thin creator ecosystems.
 
-**Q: How do you deal with incomplete or messy data?**
+### City Tiers
+- **Tier-1 (metros):** High income, high CPMs, already served by global platforms
+- **Tier-2 (state capitals, large cities):** Core acquisition cohort
+- **Tier-3/4 (smaller towns):** Longest sessions, lowest CPMs, ShareChat's strategic moat
 
-> My approach: (1) Quantify the missingness — is it random or systematic? Systematic missingness is dangerous (e.g., iOS users don't return session data on older SDK versions). (2) Document assumptions — never silently impute. (3) Validate conclusions on multiple data sources — if the Redshift aggregation matches the raw event log, I'm more confident. (4) Report uncertainty — present confidence intervals or "this finding holds if missingness < X%."
+### Android-Heavy User Base
+- 95% Android, 60% Android-Low (≤ 3GB RAM)
+- APK size, cold-start, battery drain are product metrics — not niceties
+- Features requiring persistent background processes can cause app death on low-end devices
 
----
-
-## 5. ShareChat-Specific Knowledge Cheat Sheet
-
-**Why regional language social media is hard:**
-- Unicode rendering across 15 scripts (Devanagari, Telugu, Tamil, Bengali…)
-- Content moderation at scale in languages with little NLP tooling
-- Creator economy is nascent — fewer professional creators, more user-generated
-- Ad targeting is harder (fewer third-party data signals for Indian language users)
-
-**ShareChat's moat:**
-- First-mover advantage in vernacular social (2015)
-- Network effects are language-specific — Telugu users follow Telugu creators
-- Distribution deals with Jio and telecom operators for data-light mode
-- Own ad network (not dependent on Google/Meta for monetisation)
-
-**Risks to know:**
-- Meta (Instagram Reels) and YouTube Shorts compete directly with Moj
-- Content moderation at scale is an ongoing challenge (IT Rules 2021)
-- Monetisation in tier-2/tier-3 cities has lower purchasing power → lower CPMs
-
-**QuickTV insight:**
-- Micro-drama is a format proven in China (Kuaishou, Douyin) — ShareChat is localising it
-- 5–10 minute vertical episodes are highly bingeable — drives long sessions
-- Premium content potential: users in India will pay for drama if it's high-quality
+### Creator Economy Basics
+- Power law: top 1-5% of creators generate disproportionate engagement
+- Tier progression: Nano (< 1K) → Micro → Mid → Macro → Mega (> 1M)
+- Mid-tier creators churn most: enough reach to feel monetisation limitations, not enough to benefit from creator funds
 
 ---
 
-## 6. Dashboard Walkthrough Script (2 minutes)
+## 7. Numbers to Memorise From This Project
 
-> "Let me walk you through the platform. On the Overview page, you can see the network's 200M MMU and ₹1,000 Cr ARR — the stacked area chart breaks revenue down by platform, and you can see QuickTV's revenue growing rapidly in absolute terms despite being the youngest platform.
->
-> Moving to User Analytics — the dashboard shows 15 regional languages with engagement and MAU breakdowns. Notice that Hindi is 38% of users but some smaller languages like Bhojpuri punch above their weight in engagement rate — a signal for creator investment.
->
-> Content Performance shows that Drama Episodes have the highest engagement rate at around 12%, which aligns with QuickTV's rapid growth. The scatter plot maps categories by views and engagement — Entertainment and Comedy dominate reach, while Devotional content has disproportionately high engagement for its size.
->
-> On Monetisation, I've built a waterfall chart showing QoQ revenue growth by platform, plus eCPM trends by ad format. In-Feed Video is the biggest revenue driver, and its eCPM is rising as advertiser demand catches up with inventory growth.
->
-> Finally, the Retention page has a cohort heatmap — April 2025 cohorts (top row) have the most data, and you can see M1 retention around 48%, well above the industry average of 30-35%. The DAU/MAU trend line stays above 40%, confirming healthy daily engagement habits."
-
----
-
-## 7. Questions to Ask the Interviewer
-
-1. "What does a typical week look like for a Product Analyst intern — how much is dashboarding vs. ad hoc analysis vs. A/B test design?"
-2. "Which language markets are you most focused on growing this year, and why?"
-3. "How does the team decide which metrics to track for a new feature like QuickTV?"
-4. "What's the biggest data quality challenge you face with Redshift at ShareChat's scale?"
-5. "What would make this internship convert to a full-time role?"
+| Metric | Value |
+|--------|-------|
+| Tier-1 avg session | 21.6 min |
+| Tier-3/4 avg session | 26.1 min (20% longer) |
+| Tier-1 ARPU | ₹13.92 |
+| Tier-3 ARPU | ₹2.66 (5.2x gap) |
+| Tier-1 CTR | 4.91% |
+| Tier-3 CTR | 2.13% |
+| Android-Low crash proxy | 7.92% |
+| A/B variant session lift | +6.2% (p < 0.001) |
+| A/B control avg session | 1,416s (23.6 min) |
+| A/B variant avg session | 1,503s (25.1 min) |
+| Total engagement events | 2,000,000 |
+| Total session rows | 500,000 |
+| Total ad impressions | 300,000 |
 
 ---
 
-## 8. Technical Stack to Be Comfortable With
+## 8. Behavioural Questions
 
-| Tool | What to Know |
-|---|---|
-| **SQL / Redshift** | CTEs, window functions, DATE_TRUNC, DATEDIFF, NTILE, NULLIF |
-| **Python** | pandas (groupby, merge, melt, pivot), numpy, basic stats |
-| **Excel / Sheets** | Pivot tables, VLOOKUP, basic charting |
-| **Dashboarding** | Streamlit, Tableau, Metabase, or Looker (know at least one) |
-| **Statistics** | A/B testing, statistical significance, p-values, confidence intervals |
-| **Git** | Basic version control for sharing scripts |
+**"Tell me about a time you found an insight others missed."**
+> The Tier-3/4 monetisation gap: "The instinct is to see Tier-1 as the most valuable users. But when I computed revenue-per-minute-of-attention, Tier-3/4 users are more engaged (20% longer sessions) but generate 6x less revenue per minute. That reframes the question: not 'how do we get more Tier-1 users?' but 'how do we monetise Tier-3/4's existing engagement better?'"
+
+**"How do you prioritise when you have multiple asks?"**
+> Impact × Confidence / Effort. Tier-3/4 monetisation: large impact (60% of users), high confidence (we have the data), low-effort first step (ad relevance analysis). Android-Low: large impact (60% of users), high confidence (crash-proxy is unambiguous), medium effort (engineering sprint).
+
+**"Tell me about a time you were wrong."**
+> "I initially framed Android-Low analysis as 'shorter sessions = lower engagement.' But the crash-proxy analysis showed 7.92% of sessions under 10 seconds — those aren't unengaged users, they're crashed app instances. The user wanted to engage but the app failed them. Completely different recommendation: engineering fix, not content strategy fix."
 
 ---
 
-*Good luck — you've got this. The dashboard demonstrates everything they're hiring for: curiosity about data, technical execution, and the ability to tell a coherent product story.*
+## 9. Questions to Ask the Interviewer
+
+1. "What does the weekly product review meeting look like — what data does the team pull before it?"
+2. "How does the analytics team work with data engineering on new metric definitions?"
+3. "What's the biggest measurement challenge the team is wrestling with right now?"
+4. "How do you think about defining 'meaningful engagement' for the Bharat user — is watch time the right proxy?"
