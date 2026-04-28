@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/logo.png" width="72" alt="ShareChat logo"/>
 
-  <h1>ShareChat Creator & Content Engagement Analytics</h1>
+  <h1>ShareChat Content Engagement Analytics</h1>
 
   <p><strong>An end-to-end product analytics system for a regional-language social platform — built to demonstrate the SQL depth, metric design, and analytical storytelling expected of a Product Analyst.</strong></p>
 
